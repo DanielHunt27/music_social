@@ -38,7 +38,7 @@ class _PostState extends State<Post> {
       // decoration: new BoxDecoration(
       //     color: Colors.white, boxShadow: [BoxShadow(color: Colors.black)]),
       child: Column(
-        // mainAxisSize: MainAxisSize.max,
+        mainAxisSize: MainAxisSize.max,
         // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Row(
