@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musicsocial/pages/pageManager.dart';
+import 'package:musicsocial/pages/page_manager.dart';
 
 void main() {
   runApp(MyApp());

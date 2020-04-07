@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:musicsocial/pages/homePage.dart';
-import 'package:musicsocial/pages/notificationsPage.dart';
-import 'package:musicsocial/pages/postPage.dart';
+import 'package:musicsocial/pages/home_page.dart';
+import 'package:musicsocial/pages/notifications_page.dart';
+import 'package:musicsocial/pages/post_page.dart';
 
 class PageManager extends StatefulWidget {
   @override
