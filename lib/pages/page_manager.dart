@@ -26,9 +26,9 @@ class _PageManagerState extends State<PageManager> {
   @override
   void initState() {
     // TODO add other pages below!
-    homePage = HomePage();
+    homePage = HomePage(key: keyhomePage);
     postPage = PostPage();
-    notificationsPage = NotificationsPage();
+    notificationsPage = NotificationsPage(key: keyNotificationsPage);
 
     pages = [homePage, null, postPage, notificationsPage, null];
 

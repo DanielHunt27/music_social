@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:musicsocial/widgets/post.dart';
 
 class HomePage extends StatelessWidget {
+  HomePage({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,12 +12,14 @@ class HomePage extends StatelessWidget {
           centerTitle: true,
         ),
         body: ListView.separated(
+          key: PageStorageKey(this.key),
           itemCount: 10,
           separatorBuilder: (context, index) {
             return Divider();
           },
           itemBuilder: (context, index) {
             return Container(
+                // TODO get post information from DB
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: new Post(
                   username: "@username$index",
