@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:musicsocial/pages/page_manager.dart';
+//import 'package:musicsocial/pages/page_manager.dart';
+import 'package:musicsocial/pages/sign_in_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,7 +16,8 @@ class MyApp extends StatelessWidget {
         // This is the theme of your application.
         primarySwatch: Colors.blue,
       ),
-      home: PageManager(),
+      //home: PageManager(),
+      home: SignIn(),
     );
   }
 }

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "262134206238",
+    "firebase_url": "https://music-social-f66b8.firebaseio.com",
+    "project_id": "music-social-f66b8",
+    "storage_bucket": "music-social-f66b8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:262134206238:android:2f3fad1e013d622005030f",
+        "android_client_info": {
+          "package_name": "csci567.musicsocial"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "262134206238-1hdi6qmi8ugq91o0qod79pjanutpg6ms.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAorG35lr1KdMn1gMQxcww64bq4QydsOYQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "262134206238-1hdi6qmi8ugq91o0qod79pjanutpg6ms.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
