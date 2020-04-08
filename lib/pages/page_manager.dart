@@ -49,44 +49,45 @@ class _PageManagerState extends State<PageManager> {
   Widget build(BuildContext context) {
     // TODO If user is logged out then show log in screen instead
     return Scaffold(
-        body: PageStorage(
-          child: currentPage,
-          bucket: pageBucket,
+      body: PageStorage(
+        child: currentPage,
+        bucket: pageBucket,
+      ),
+      bottomNavigationBar: Container(
+        decoration: new BoxDecoration(
+            color: Colors.black, boxShadow: [BoxShadow(color: Colors.black)]),
+        child: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text('Home'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+              title: Text('Search'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_box),
+              title: Text('Upload'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.notifications),
+              title: Text('Notifications'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              title: Text('Profile'),
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Theme.of(context).primaryColor,
+          unselectedItemColor: Colors.grey,
+          onTap: _onItemTapped,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          type: BottomNavigationBarType.fixed,
         ),
-        bottomNavigationBar: Container(
-            decoration: new BoxDecoration(
-                color: Colors.black,
-                boxShadow: [BoxShadow(color: Colors.black)]),
-            child: BottomNavigationBar(
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  title: Text('Home'),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.search),
-                  title: Text('Search'),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.add_box),
-                  title: Text('Upload'),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.notifications),
-                  title: Text('Notifications'),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline),
-                  title: Text('Profile'),
-                ),
-              ],
-              currentIndex: _selectedIndex,
-              selectedItemColor: Theme.of(context).primaryColor,
-              unselectedItemColor: Colors.grey,
-              onTap: _onItemTapped,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              type: BottomNavigationBarType.fixed,
-            )));
+      ),
+    );
   }
 }
