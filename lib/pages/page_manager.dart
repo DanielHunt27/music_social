@@ -55,7 +55,9 @@ class _PageManagerState extends State<PageManager> {
       ),
       bottomNavigationBar: Container(
         decoration: new BoxDecoration(
-            color: Colors.black, boxShadow: [BoxShadow(color: Colors.black)]),
+          color: Colors.black,
+          boxShadow: [BoxShadow(color: Colors.black)],
+        ),
         child: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(

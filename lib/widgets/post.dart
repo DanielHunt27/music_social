@@ -54,13 +54,14 @@ class _PostState extends State<Post> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               GestureDetector(
-                  onTap: () {
-                    print("profile picture pressed");
-                  },
-                  child: CircleAvatar(
-                    radius: 35.0,
-                    // backgroundImage: AssetImage(assetName),
-                  )),
+                onTap: () {
+                  print("profile picture pressed");
+                },
+                child: CircleAvatar(
+                  radius: 35.0,
+                  // backgroundImage: AssetImage(assetName),
+                ),
+              ),
               SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,11 +77,13 @@ class _PostState extends State<Post> {
                         ),
                       ),
                       SizedBox(width: 5),
-                      Text("${widget.username} · ${widget.timestamp}",
-                          style: TextStyle(
-                            fontSize: mainFontSize,
-                            color: Colors.grey,
-                          )),
+                      Text(
+                        "${widget.username} · ${widget.timestamp}",
+                        style: TextStyle(
+                          fontSize: mainFontSize,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(height: 2),
@@ -124,11 +127,13 @@ class _PostState extends State<Post> {
                 },
               ),
               SizedBox(width: 6),
-              Text("${widget.likes} likes, ${widget.comments} comments",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: secondaryFontSize,
-                  )),
+              Text(
+                "${widget.likes} likes, ${widget.comments} comments",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: secondaryFontSize,
+                ),
+              ),
             ],
           ),
           // SizedBox(height: 2),
