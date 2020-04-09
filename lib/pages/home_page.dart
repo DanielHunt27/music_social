@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
           return Container(
             // TODO get post information from DB
             padding: EdgeInsets.symmetric(vertical: 10),
-            child: new Post(
+            child: Post(
               username: "@username$index",
               name: "Name $index",
               caption: "Caption $index",

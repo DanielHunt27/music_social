@@ -40,7 +40,7 @@ class _PostState extends State<Post> {
   Widget build(BuildContext context) {
     return Container(
       // height: 120,
-      // decoration: new BoxDecoration(
+      // decoration: BoxDecoration(
       //     color: Colors.white, boxShadow: [BoxShadow(color: Colors.black)]),
       padding: EdgeInsets.only(top: 10, left: 16, right: 16, bottom: 0),
 

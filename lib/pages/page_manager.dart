@@ -4,6 +4,7 @@ import 'package:musicsocial/pages/notifications_page.dart';
 import 'package:musicsocial/pages/post_page.dart';
 
 class PageManager extends StatefulWidget {
+  PageManager({Key key}) : super(key: key);
   @override
   _PageManagerState createState() => _PageManagerState();
 }
@@ -52,9 +53,10 @@ class _PageManagerState extends State<PageManager> {
       body: PageStorage(
         child: currentPage,
         bucket: pageBucket,
+        key: PageStorageKey(widget.key),
       ),
       bottomNavigationBar: Container(
-        decoration: new BoxDecoration(
+        decoration: BoxDecoration(
           color: Colors.black,
           boxShadow: [BoxShadow(color: Colors.black)],
         ),

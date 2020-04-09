@@ -21,7 +21,7 @@ class NotificationsPage extends StatelessWidget {
         },
         itemBuilder: (context, index) {
           return Container(
-            child: new NotificationWidget(
+            child: NotificationWidget(
               // TODO get notification from DB
               username: "@username$index",
               notification: (index % 3 == 1)
