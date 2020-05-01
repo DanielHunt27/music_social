@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:musicsocial/pages/page_manager.dart';
+import 'package:musicsocial/helpers/database_helper.dart';
+import 'package:musicsocial/pages/register_page.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -11,6 +13,8 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final _auth = FirebaseAuth.instance;
   bool spinner = false;
+  String name;
+  String username;
   String email;
   String password;
   String errorText = "";
@@ -41,7 +45,8 @@ class _SignInState extends State<SignIn> {
                   email = value;
                 },
                 decoration: InputDecoration(
-                  hintText: 'Enter Your Email',
+                  labelText: 'Email',
+                  // hintText: 'Email Address',
                 ),
               ),
               SizedBox(
@@ -54,7 +59,8 @@ class _SignInState extends State<SignIn> {
                   password = value;
                 },
                 decoration: InputDecoration(
-                  hintText: 'Enter Your Password',
+                  labelText: 'Password',
+                  hintText: '',
                 ),
               ),
               SizedBox(
@@ -82,7 +88,7 @@ class _SignInState extends State<SignIn> {
                       final newUser = await _auth.signInWithEmailAndPassword(
                           email: email, password: password);
                       if (newUser != null) {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => PageManager()),
                         );
@@ -117,32 +123,14 @@ class _SignInState extends State<SignIn> {
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 child: MaterialButton(
                   onPressed: () async {
-                    setState(() {
-                      spinner = true;
-                    });
-                    try {
-                      final newUser = await _auth.createUserWithEmailAndPassword(
-                          email: email, password: password);
-                      if (newUser != null) {
-                        Navigator.push(
+                    Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => PageManager()),
-                        );
-                      }
-                    } catch (e) {
-                      print(e);
-                      setState(() {
-                        errorText = e.message;
-                      });
-                    }
-                    setState(() {
-                      spinner = false;
-                    });
+                          MaterialPageRoute(builder: (context) => RegisterPage()));
                   },
                   //minWidth: 200.0,
                   //height: 35.0,
                   child: Text(
-                    'Sign Up',
+                    'Register',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),

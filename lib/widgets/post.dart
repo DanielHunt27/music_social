@@ -1,43 +1,70 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:musicsocial/helpers/database_helper.dart';
+import 'package:musicsocial/helpers/helper_functions.dart';
+import 'package:musicsocial/pages/post_view_comments_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Post extends StatefulWidget {
-  Post(
-      {Key key,
-      this.username,
-      this.name,
-      this.caption,
-      this.likes,
-      this.comments,
-      this.isLiked,
-      this.timestamp})
-      : super(key: key);
+  Post({Key key, this.postDocument}) : super(key: key);
 
-  final String username;
-  final String name;
-  final String caption;
-  final int likes;
-  final int comments;
-  final String timestamp;
+  final DocumentSnapshot postDocument;
 
-  final bool isLiked;
   @override
   _PostState createState() => _PostState();
 }
 
 class _PostState extends State<Post> {
-  bool isLiked;
+  String username = "Loading...";
+  String name = "Loading...";
+  int likeCount = 0;
+  Map<String, dynamic> likes;
+  bool hasLiked = false;
+  
+  String caption;
+  String timestamp;
+  int commentCount;
 
   final double mainFontSize = 15.0;
   final double secondaryFontSize = 13.0;
 
   @override
-  void initState() {
-    isLiked = widget.isLiked;
+  void initState(){
+    // Get user info
+    getUser(widget.postDocument['uid']).then((user){
+      setState(() {
+        username = user['username'];
+        name = user['name'];
+      });
+    });
+
+    // Get likes
+    try { 
+      likes = new Map<String, dynamic>.from(widget.postDocument['likes']);
+      likeCount = likes.length;
+    }  
+    catch (e) {
+    }
+
+    // Check if current user has liked it
+    FirebaseAuth.instance.currentUser().then((currentUser){
+      if (likes != null && likes.containsKey(currentUser.uid)) {
+        setState(() {
+          hasLiked = true;
+        });
+      }
+    });
+
+    
+    caption = widget.postDocument['caption'];
+    timestamp = getTimeDifference(widget.postDocument['timestamp'].toDate());
+    commentCount = widget.postDocument['commentCount'];
+
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     return Container(
       // height: 120,
       // decoration: BoxDecoration(
@@ -70,7 +97,7 @@ class _PostState extends State<Post> {
                   Row(
                     children: <Widget>[
                       Text(
-                        widget.name,
+                        this.name,
                         style: TextStyle(
                           fontSize: mainFontSize,
                           fontWeight: FontWeight.bold,
@@ -78,7 +105,7 @@ class _PostState extends State<Post> {
                       ),
                       SizedBox(width: 5),
                       Text(
-                        "${widget.username} · ${widget.timestamp}",
+                        "${this.username} · ${this.timestamp}",
                         style: TextStyle(
                           fontSize: mainFontSize,
                           color: Colors.grey,
@@ -88,7 +115,7 @@ class _PostState extends State<Post> {
                   ),
                   SizedBox(height: 2),
                   Text(
-                    widget.caption,
+                    caption,
                     style: TextStyle(fontSize: mainFontSize),
                   ),
                   SizedBox(height: 15),
@@ -104,14 +131,14 @@ class _PostState extends State<Post> {
               // Like btn
               GestureDetector(
                 child: Icon(
-                  ((isLiked) ? Icons.favorite_border : Icons.favorite),
+                  ((hasLiked) ? Icons.favorite : Icons.favorite_border),
                   size: 24.0,
-                  color: (isLiked) ? Colors.black : Colors.red,
+                  color: (hasLiked) ? Colors.red : Colors.black,
                 ),
                 onTap: () {
-                  print("liked button pressed");
+                  likePost(widget.postDocument);
                   setState(() {
-                    isLiked = !isLiked;
+                    hasLiked = !hasLiked;
                   });
                 },
               ),
@@ -124,11 +151,12 @@ class _PostState extends State<Post> {
                 ),
                 onTap: () {
                   print("comment button pressed");
+                  viewComments();
                 },
               ),
               SizedBox(width: 6),
               Text(
-                "${widget.likes} likes, ${widget.comments} comments",
+                "${this.likeCount} likes, ${this.commentCount} comments",
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: secondaryFontSize,
@@ -142,6 +170,15 @@ class _PostState extends State<Post> {
           // ),
         ],
       ),
+    );
+  }
+
+  void viewComments() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              PostViewComments(postDocument: widget.postDocument)),
     );
   }
 }
