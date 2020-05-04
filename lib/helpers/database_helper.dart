@@ -8,14 +8,17 @@ Future<DocumentSnapshot> getUser(String userID) async {
   return userDocument;
 }
 
+
+
 ///  Adds the post to the database
-Future<DocumentReference> createPost(String caption) async {
+Future<DocumentReference> createPost(String caption, String song) async {
   var currentUser = await FirebaseAuth.instance.currentUser();
 
   // Create Post
   var post = new Map<String, dynamic>();
   post['uid'] = currentUser.uid;
   post['caption'] = caption;
+  post['song'] = song;
   post['likes'] = new Map<String, dynamic>();
   post['commentCount'] = 0;
   post['timestamp'] = FieldValue.serverTimestamp();

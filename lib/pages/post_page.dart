@@ -24,6 +24,7 @@ class PostForm extends StatefulWidget {
 class _PostFormState extends State<PostForm> {
   final _formKey = GlobalKey<FormState>();
   final captionController = TextEditingController();
+  final songController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +36,7 @@ class _PostFormState extends State<PostForm> {
         child: Column(
           children: <Widget>[
             TextFormField(
+              controller: songController,
               decoration: const InputDecoration(
                 // icon: Icon(Icons.comment),
                 labelText: 'Song',
@@ -72,7 +74,7 @@ class _PostFormState extends State<PostForm> {
                       .of(context)
                       .showSnackBar(SnackBar(content: Text('Posting...')));
                   // Adds post to the database
-                  createPost(captionController.text);
+                  createPost(captionController.text, songController.text);
                   Scaffold
                       .of(context)
                       .showSnackBar(SnackBar(content: Text('Posted')));

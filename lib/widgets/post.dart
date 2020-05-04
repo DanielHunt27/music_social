@@ -4,6 +4,7 @@ import 'package:musicsocial/helpers/database_helper.dart';
 import 'package:musicsocial/helpers/helper_functions.dart';
 import 'package:musicsocial/pages/post_view_comments_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:musicsocial/pages/profile_page.dart';
 
 class Post extends StatefulWidget {
   Post({Key key, this.postDocument}) : super(key: key);
@@ -83,6 +84,11 @@ class _PostState extends State<Post> {
               GestureDetector(
                 onTap: () {
                   print("profile picture pressed");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>
+                        ProfilePage(uid: widget.postDocument['uid'])),
+                  );
                 },
                 child: CircleAvatar(
                   radius: 35.0,

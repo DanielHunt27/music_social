@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:musicsocial/pages/home_page.dart';
 import 'package:musicsocial/pages/notifications_page.dart';
 import 'package:musicsocial/pages/post_page.dart';
+import 'package:musicsocial/pages/profile_page.dart';
+import 'package:musicsocial/pages/search_page.dart';
 
 class PageManager extends StatefulWidget {
   PageManager({Key key}) : super(key: key);
@@ -14,9 +16,13 @@ class _PageManagerState extends State<PageManager> {
   HomePage homePage;
   PostPage postPage;
   NotificationsPage notificationsPage;
+  ProfilePage profilePage;
+  SearchPage searchPage;
   final Key keyhomePage = PageStorageKey("homePage");
   final Key keyPostPage = PageStorageKey("postPage");
   final Key keyNotificationsPage = PageStorageKey("notificationsPage");
+  final Key keyProfilePage = PageStorageKey("profilePage");
+  final Key keySearchPage = PageStorageKey("searchPage");
 
   final PageStorageBucket pageBucket = PageStorageBucket();
   List<Widget> pages;
@@ -30,8 +36,10 @@ class _PageManagerState extends State<PageManager> {
     homePage = HomePage(key: keyhomePage);
     postPage = PostPage();
     notificationsPage = NotificationsPage(key: keyNotificationsPage);
+    profilePage = ProfilePage(key: keyProfilePage, uid: '-_@_-');
+    searchPage = SearchPage(key: keySearchPage);
 
-    pages = [homePage, null, postPage, notificationsPage, null];
+    pages = [homePage, searchPage, postPage, notificationsPage, profilePage];
 
     currentPage = homePage;
 
