@@ -19,16 +19,20 @@ class EmbeddedSpotifyPlayer extends StatelessWidget {
 
     if (isTrack) {
       html =
-          '<iframe src="https://open.spotify.com/embed/track/${this.uri}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe';
+          '<iframe src="https://open.spotify.com/embed/track/${this.uri}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>';
     } else if (isAlbum) {
       html =
-          '<iframe src="https://open.spotify.com/embed/album/${this.uri}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe';
+          '<iframe src="https://open.spotify.com/embed/album/${this.uri}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>';
     }
 
     return Container(
+      height: 93,
+      width: 350,
+      color: Colors.red,
       child: WebView(
         initialUrl: Uri.dataFromString(html,mimeType: 'text/html').toString(),
         javascriptMode: JavascriptMode.unrestricted,
+        
       ),
     );
   }

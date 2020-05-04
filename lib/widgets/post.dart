@@ -5,6 +5,7 @@ import 'package:musicsocial/helpers/helper_functions.dart';
 import 'package:musicsocial/pages/post_view_comments_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:musicsocial/pages/profile_page.dart';
+import 'package:musicsocial/widgets/embedded_player.dart';
 
 class Post extends StatefulWidget {
   Post({Key key, this.postDocument}) : super(key: key);
@@ -125,11 +126,13 @@ class _PostState extends State<Post> {
                     style: TextStyle(fontSize: mainFontSize),
                   ),
                   SizedBox(height: 15),
-                  Text("Embedded Player"),
                 ],
               ),
             ],
           ),
+          SizedBox(height: 7),
+          EmbeddedPlayer(isSpotify: true, uri: "466cKvZn1j45IpxDdYZqdA"),
+          // EmbeddedPlayer(isSoundcloud: true, uri: "805856467"),
           SizedBox(height: 12),
           Row(
             children: <Widget>[
