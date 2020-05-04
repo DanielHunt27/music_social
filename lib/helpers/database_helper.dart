@@ -99,10 +99,11 @@ Future<DocumentReference> likePost(DocumentSnapshot postDocument) async{
 }
 
 /// Adds document with the userid to the database
-void addUser(String userID, String username, String name) async {
+void addUser(String userID, String username, String name, {String profilepic = 'https://firebasestorage.googleapis.com/v0/b/music-social-f66b8.appspot.com/o/default-profile-picture1.jpg?alt=media&token=f6c13df3-ce20-4a5d-a771-77db612165f1'}) async {
   var user = new Map<String, dynamic>();
   user['username'] = username;
   user['name'] = name;
   user['timestamp'] = FieldValue.serverTimestamp();
+  user['profilepic'] = profilepic;
   await Firestore.instance.collection('users').document(userID).setData(user);
 }
