@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:musicsocial/pages/edit_account_page.dart';
 import 'package:musicsocial/widgets/post.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -14,8 +15,16 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   var profileData;
   String uid;
-  String username, name;
+  String username = 'Loading...', name = 'Loading...';
   var posts = new List();
+  FirebaseUser loggedInUser;
+  Widget button = OutlineButton(
+    child: Text('Loading...'),
+    onPressed: () {
+      print('button pressed');
+    },
+  );
+  Widget avatar = CircleAvatar(radius: 50);
 
   @override
   void initState() {
@@ -25,24 +34,47 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void getCurrentUser() async {
     try {
+      final user = await FirebaseAuth.instance.currentUser();
       if (widget.uid == '-_@_-') {
-        final loggedInUser = await FirebaseAuth.instance.currentUser();
-        uid = loggedInUser.uid;
+        uid = user.uid;
+        button = OutlineButton(
+          child: Text('Edit Account'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>
+                  EditAccountPage()),
+            );
+          },
+        );
       } else {
         uid = widget.uid;
+        button = OutlineButton(
+          child: Text('Follow'),
+          onPressed: () {
+            print('button pressed');
+          },
+        );
       }
+      loggedInUser = user;
       if (uid != null) {
         final profileData = await Firestore.instance.collection('users')
             .document(uid).get();
         setState(() {
           name = profileData.data['name'];
           username = profileData.data['username'];
+          avatar = CircleAvatar(
+            radius: 50,
+            backgroundImage: NetworkImage(profileData.data['profilepic']),
+          );
         });
       }
     } catch (e) {
       print(e);
     }
   }
+
+
 
   /*
   * There's two different styles of scrolling, but not sure which one looks better
@@ -143,24 +175,16 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                CircleAvatar(
-                  radius: 50,
-                ),
+                avatar,
                 Column(
                   children: <Widget>[
-                    Text(
-                      name,
+                    Text(name,
                       style: TextStyle(
                         fontSize: 20,
                       ),
                     ),
                     Text(username),
-                    OutlineButton(
-                      child: Text('Follow'),
-                      onPressed: () {
-                        print('button pressed');
-                      },
-                    ),
+                    button,
                   ],
                 ),
               ],
@@ -177,7 +201,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 if (!snapshot.hasData)
                   return Center(child: CircularProgressIndicator());
                 return ListView.separated(
-                  //key: PageStorageKey(this.key),
                   itemCount: snapshot.data.documents.length,
                   separatorBuilder: (context, index) {
                     return Divider();

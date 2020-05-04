@@ -18,6 +18,9 @@ class Post extends StatefulWidget {
 class _PostState extends State<Post> {
   String username = "Loading...";
   String name = "Loading...";
+  Widget avatar = CircleAvatar(
+    radius: 35.0,
+  );
   int likeCount = 0;
   Map<String, dynamic> likes;
   bool hasLiked = false;
@@ -36,6 +39,10 @@ class _PostState extends State<Post> {
       setState(() {
         username = user['username'];
         name = user['name'];
+        avatar = CircleAvatar(
+          radius: 35.0,
+          backgroundImage: NetworkImage(user['profilepic']),
+        );
       });
     });
 
@@ -90,10 +97,10 @@ class _PostState extends State<Post> {
                         ProfilePage(uid: widget.postDocument['uid'])),
                   );
                 },
-                child: CircleAvatar(
+                child: avatar/*CircleAvatar(
                   radius: 35.0,
-                  // backgroundImage: AssetImage(assetName),
-                ),
+                   backgroundImage: NetworkImage(pic),
+                ),*/
               ),
               SizedBox(width: 10),
               Column(
