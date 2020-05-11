@@ -143,10 +143,7 @@ class _PostState extends State<Post> {
             ],
           ),
           SizedBox(height: 7),
-          (this.type == 0)? EmbeddedPlayer(isSpotify: true, uri: this.uri) :
-          (this.type == 1)? EmbeddedPlayer(isSoundcloud: true, uri: this.uri) : null,
-          
-          // EmbeddedPlayer(isSoundcloud: true, uri: "805856467"),
+          EmbeddedPlayer(uri: this.uri, type: this.type),
           SizedBox(height: 12),
           Row(
             children: <Widget>[

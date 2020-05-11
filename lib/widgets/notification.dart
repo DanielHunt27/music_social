@@ -135,7 +135,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                 ? Image(
                     // TODO Add song cover image
                     image: NetworkImage(
-                        "https://upload.wikimedia.org/wikipedia/en/b/b7/NirvanaNevermindalbumcover.jpg"),
+                        "https://firebasestorage.googleapis.com/v0/b/music-social-f66b8.appspot.com/o/albumcover-placeholder.jpg?alt=media&token=21edca1a-2264-40b8-8802-703e479a8b35"),
                     width: 55,
                     height: 55,
                   )

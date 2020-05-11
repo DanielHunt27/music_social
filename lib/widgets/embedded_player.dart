@@ -3,21 +3,25 @@ import 'package:musicsocial/widgets/embedded_soundcloud.dart';
 import 'package:musicsocial/widgets/embedded_spotify.dart';
 
 class EmbeddedPlayer extends StatelessWidget {
-  EmbeddedPlayer({Key key, this.isSpotify, this.isSoundcloud, this.uri});
+  EmbeddedPlayer({Key key, this.uri, this.type});
 
-  final bool isSpotify;
-  final bool isSoundcloud;
-
+  final int type;
   final String uri;
 
   @override
   Widget build(BuildContext context) {
-    if (isSpotify) {
-      return EmbeddedSpotifyPlayer(uri: this.uri, isTrack: true, isAlbum: false);
-    } else if (isSoundcloud){
-      return EmbeddedSoundCloudPlayer(uri: this.uri);
+    switch (type) {
+      case 0:
+        return EmbeddedSpotifyPlayer(uri: this.uri);
+        break;
+      case 1:
+        return Container(
+          height: 180,
+          child: EmbeddedSoundCloudPlayer(uri: this.uri),
+        );
+        break;
+      default:
+        return Container();
     }
-    return Container(
-    );
   }
 }
