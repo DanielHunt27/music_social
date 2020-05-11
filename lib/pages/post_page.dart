@@ -25,6 +25,15 @@ class _PostFormState extends State<PostForm> {
   final _formKey = GlobalKey<FormState>();
   final captionController = TextEditingController();
   final songController = TextEditingController();
+  final songURIController = TextEditingController();
+  int songType = 0;
+
+  void _songTypeChange(int value) {
+    setState(() {
+      songType = value;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +51,39 @@ class _PostFormState extends State<PostForm> {
                 labelText: 'Song',
               ),
             ),
+            TextFormField(
+              controller: songURIController,
+              decoration: const InputDecoration(
+                // icon: Icon(Icons.comment),
+                labelText: 'Song URI',
+                hintText: 'E.g 22bvm1tH5Uv6Egvk38Xvr8'
+              ),
+            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Radio(
+                    value: 0,
+                    groupValue: songType,
+                    onChanged: _songTypeChange,
+                  ),
+                  Text(
+                    'Spotify',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  Radio(
+                    value: 1,
+                    groupValue: songType,
+                    onChanged: _songTypeChange,
+                  ),
+                  Text(
+                    'Soundcloud',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ],
+              ),
             TextFormField(
               controller: captionController,
               decoration: const InputDecoration(
@@ -74,7 +116,7 @@ class _PostFormState extends State<PostForm> {
                       .of(context)
                       .showSnackBar(SnackBar(content: Text('Posting...')));
                   // Adds post to the database
-                  createPost(captionController.text, songController.text);
+                  createPost(captionController.text, songController.text, songURIController.text, songType);
                   Scaffold
                       .of(context)
                       .showSnackBar(SnackBar(content: Text('Posted')));

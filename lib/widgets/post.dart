@@ -31,6 +31,9 @@ class _PostState extends State<Post> {
   int commentCount;
   NetworkImage profilepic;
 
+  int type;
+  String uri;
+
   final double mainFontSize = 15.0;
   final double secondaryFontSize = 13.0;
 
@@ -63,6 +66,12 @@ class _PostState extends State<Post> {
     caption = widget.postDocument['caption'];
     timestamp = getTimeDifference(widget.postDocument['timestamp'].toDate());
     commentCount = widget.postDocument['commentCount'];
+    uri = widget.postDocument['uri'];
+    type = widget.postDocument['type'];
+    if (uri == null)
+      uri = "4z2JaAVPemYJhFKm7e32RA";
+    if (type == null)
+      type = 0;
 
     super.initState();
   }
@@ -134,7 +143,9 @@ class _PostState extends State<Post> {
             ],
           ),
           SizedBox(height: 7),
-          EmbeddedPlayer(isSpotify: true, uri: "466cKvZn1j45IpxDdYZqdA"),
+          (this.type == 0)? EmbeddedPlayer(isSpotify: true, uri: this.uri) :
+          (this.type == 1)? EmbeddedPlayer(isSoundcloud: true, uri: this.uri) : null,
+          
           // EmbeddedPlayer(isSoundcloud: true, uri: "805856467"),
           SizedBox(height: 12),
           Row(

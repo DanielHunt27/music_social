@@ -168,7 +168,9 @@ Future<DocumentReference> createNotification(
 }
 
 ///  Adds the post to the database
-Future<DocumentReference> createPost(String caption, String song) async {
+/// Type 0 - spotify
+/// Type 1 - soundcloud
+Future<DocumentReference> createPost(String caption, String song, String uri, int type) async {
   var currentUser = await _auth.currentUser();
 
   // Create Post
@@ -176,6 +178,8 @@ Future<DocumentReference> createPost(String caption, String song) async {
   post['uid'] = currentUser.uid;
   post['caption'] = caption;
   post['song'] = song;
+  post['uri'] = uri;
+  post['type'] = type;
   post['likes'] = new Map<String, dynamic>();
   post['commentCount'] = 0;
   post['timestamp'] = FieldValue.serverTimestamp();
