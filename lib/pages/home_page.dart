@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
         centerTitle: true,
       ),
       body: StreamBuilder<QuerySnapshot>(
-          stream: Firestore.instance.collectionGroup('posts').snapshots(),              
+          stream: Firestore.instance.collectionGroup('posts').orderBy('timestamp', descending: true).snapshots(),              
           builder: (context, snapshot) {
             if(!snapshot.hasData) return Center(child: CircularProgressIndicator());
             return ListView.separated(

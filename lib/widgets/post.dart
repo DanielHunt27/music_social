@@ -68,7 +68,7 @@ class _PostState extends State<Post> {
     commentCount = widget.postDocument['commentCount'];
     uri = widget.postDocument['uri'];
     type = widget.postDocument['type'];
-    if (uri == null)
+    if (uri == null || uri == "")
       uri = "4z2JaAVPemYJhFKm7e32RA";
     if (type == null)
       type = 0;

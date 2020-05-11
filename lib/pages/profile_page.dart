@@ -196,7 +196,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: Firestore.instance.collection('users')
-                  .document(uid).collection('posts').snapshots(),
+                  .document(uid).collection('posts').orderBy('timestamp', descending: true).snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData)
                   return Center(child: CircularProgressIndicator());
