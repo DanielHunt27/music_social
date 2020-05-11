@@ -43,10 +43,10 @@ Future<http.Response> sendNotification(String uid, int type) async{
   String token;
 
   // Get token of the user
-  await _db.collection('users').document(uid).collection('tokens').getDocuments().then((value) {
-    value.documents.forEach((element) {
-      token = element['token'];
-    });
+  await _db.collection('users').document(uid).collection('tokens').orderBy('timestamp', descending:true).getDocuments().then((value) {
+    // Get token of latest device
+    if (value.documents.isNotEmpty)
+      token = value.documents[0]['token'];
   });
 
   Secret secret = await SecretLoader(secretPath: "secrets.json").load();
@@ -57,8 +57,8 @@ Future<http.Response> sendNotification(String uid, int type) async{
   }else if(type == 1){
     message = "Someone commented on your post";
   }
-  // Sleeping for test
-  sleep(Duration(seconds: 5));
+  // Sleeping so we can test notification
+  await Future.delayed(const Duration(seconds: 5));
 
   http.Response response = await http.post(
     'https://fcm.googleapis.com/fcm/send',
@@ -83,8 +83,8 @@ Future<http.Response> sendNotification(String uid, int type) async{
     ),
   );
   // .then((responseValue){
-  //   // print(responseValue.statusCode);
-  //   // print(responseValue.body);
+  //   print(responseValue.statusCode);
+  //   print(responseValue.body);
   // });
   return response;
 }
