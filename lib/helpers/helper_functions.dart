@@ -9,10 +9,10 @@ String getTimeDifference(DateTime date) {
 
   if (difference.inDays >= 365) {
     // return time.strftime("%d %B %Y");
-    return new DateFormat('d B Y').format(date).toString();
+    return new DateFormat('d LLL y').format(date).toString();
   } else if (difference.inDays >= 7) {
     // return time.strftime("%d %B");
-    return new DateFormat('d B').format(date).toString();
+    return new DateFormat('d LLL').format(date).toString();
   } else if (difference.inDays > 1) {
     return difference.inDays.toString() + " days ago";
   } else if (difference.inDays == 1) {

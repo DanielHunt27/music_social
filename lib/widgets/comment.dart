@@ -4,9 +4,7 @@ import 'package:musicsocial/helpers/database_helper.dart';
 import 'package:musicsocial/helpers/helper_functions.dart';
 
 class Comment extends StatefulWidget {
-  Comment({Key key, this.comment})
-      : super(key: key);
-
+  Comment({Key key, this.comment}) : super(key: key);
 
   final DocumentSnapshot comment;
 
@@ -17,26 +15,27 @@ class Comment extends StatefulWidget {
 class _CommentState extends State<Comment> {
   String username = 'Loading...';
   String name = 'Loading...';
-    String comment;
+  String comment;
   String timestamp;
+  NetworkImage profilepic;
 
   final double mainFontSize = 15.0;
   final double secondaryFontSize = 13.0;
 
   @override
   void initState() {
-    getUser(widget.comment['uid']).then((user){
+    getUser(widget.comment['uid']).then((user) {
       setState(() {
         name = user['name'];
         username = user['username'];
+        profilepic =  NetworkImage(user['profilepic']);
       });
     });
     comment = widget.comment['comment'];
-    
+
     timestamp = getTimeDifference(widget.comment['timestamp'].toDate());
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +53,7 @@ class _CommentState extends State<Comment> {
                 },
                 child: CircleAvatar(
                   radius: 35.0,
-                  // backgroundImage: AssetImage(assetName),
+                  backgroundImage: profilepic,
                 ),
               ),
               SizedBox(width: 10),

@@ -1,8 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:musicsocial/widgets/notification.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class NotificationsPage extends StatelessWidget {
+class NotificationsPage extends StatefulWidget {
   NotificationsPage({Key key}) : super(key: key);
+
+  @override
+  _NotificationsPageState createState() => _NotificationsPageState();
+}
+
+class _NotificationsPageState extends State<NotificationsPage> {
+  String currentUser;
+
+  @override
+  void initState() {
+    FirebaseAuth.instance.currentUser().then((value) {
+      setState(() {
+        currentUser = value.uid;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,26 +30,30 @@ class NotificationsPage extends StatelessWidget {
         title: Text('Notifications'),
         centerTitle: true,
       ),
-      body: ListView.separated(
-        itemCount: 15,
-        key: PageStorageKey(this.key),
-        separatorBuilder: (context, index) {
-          return Divider(
-            height: 0.0,
-          );
-        },
-        itemBuilder: (context, index) {
-          return Container(
-            child: NotificationWidget(
-              // TODO get notification from DB
-              username: "@username$index",
-              notification: (index % 3 == 1)
-                  ? "liked your post."
-                  : "started following you.",
-              timestamp: "${index * 3 + 1}m",
-              isPost: (index % 3 == 1) ? true : false,
-              post: null,
-            ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: Firestore.instance
+            .collection('users')
+            .document(currentUser)
+            .collection('notifications')
+            .orderBy('timestamp', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData)
+            return Center(child: CircularProgressIndicator());
+          return ListView.separated(
+            key: PageStorageKey(widget.key),
+            itemCount: snapshot.data.documents.length,
+            separatorBuilder: (context, index) {
+              return Divider();
+            },
+            itemBuilder: (context, index) {
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: NotificationWidget(
+                  notificationDocument: snapshot.data.documents[index],
+                ),
+              );
+            },
           );
         },
       ),

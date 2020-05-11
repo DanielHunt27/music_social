@@ -25,38 +25,34 @@ class _PostState extends State<Post> {
   int likeCount = 0;
   Map<String, dynamic> likes;
   bool hasLiked = false;
-  
+
   String caption;
   String timestamp;
   int commentCount;
+  NetworkImage profilepic;
 
   final double mainFontSize = 15.0;
   final double secondaryFontSize = 13.0;
 
   @override
-  void initState(){
+  void initState() {
     // Get user info
-    getUser(widget.postDocument['uid']).then((user){
+    getUser(widget.postDocument['uid']).then((user) {
       setState(() {
         username = user['username'];
         name = user['name'];
-        avatar = CircleAvatar(
-          radius: 35.0,
-          backgroundImage: NetworkImage(user['profilepic']),
-        );
+        profilepic =  NetworkImage(user['profilepic']);
       });
     });
 
     // Get likes
-    try { 
+    try {
       likes = new Map<String, dynamic>.from(widget.postDocument['likes']);
       likeCount = likes.length;
-    }  
-    catch (e) {
-    }
+    } catch (e) {}
 
     // Check if current user has liked it
-    FirebaseAuth.instance.currentUser().then((currentUser){
+    FirebaseAuth.instance.currentUser().then((currentUser) {
       if (likes != null && likes.containsKey(currentUser.uid)) {
         setState(() {
           hasLiked = true;
@@ -64,7 +60,6 @@ class _PostState extends State<Post> {
       }
     });
 
-    
     caption = widget.postDocument['caption'];
     timestamp = getTimeDifference(widget.postDocument['timestamp'].toDate());
     commentCount = widget.postDocument['commentCount'];
@@ -73,7 +68,7 @@ class _PostState extends State<Post> {
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Container(
       // height: 120,
       // decoration: BoxDecoration(
@@ -94,14 +89,15 @@ class _PostState extends State<Post> {
                   print("profile picture pressed");
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) =>
-                        ProfilePage(uid: widget.postDocument['uid'])),
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ProfilePage(uid: widget.postDocument['uid'])),
                   );
                 },
-                child: avatar/*CircleAvatar(
+                child: CircleAvatar(
                   radius: 35.0,
-                   backgroundImage: NetworkImage(pic),
-                ),*/
+                  backgroundImage: profilepic,
+                ),
               ),
               SizedBox(width: 10),
               Column(

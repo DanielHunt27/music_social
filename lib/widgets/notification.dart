@@ -1,35 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:musicsocial/helpers/database_helper.dart';
+import 'package:musicsocial/helpers/helper_functions.dart';
+import 'package:musicsocial/pages/post_view_comments_page.dart';
 
 class NotificationWidget extends StatefulWidget {
-  NotificationWidget(
-      {Key key,
-      this.username,
-      this.notification,
-      this.caption,
-      this.isPost,
-      this.post,
-      this.timestamp})
-      : super(key: key);
+  NotificationWidget({Key key, this.notificationDocument}) : super(key: key);
 
-  final String username;
-  final String notification;
-  final String caption;
-  final bool isPost;
-  final String post;
-  final String timestamp;
+  final DocumentSnapshot notificationDocument;
 
   @override
   _NotificationWidgetState createState() => _NotificationWidgetState();
 }
 
 class _NotificationWidgetState extends State<NotificationWidget> {
+  String username = "Loading...";
+  String name = "Loading...";
+  NetworkImage profilepic;
+
+  int type = -1;
+  String notification;
+  String timestamp;
+
+  bool isPost = true;
+  DocumentSnapshot postDocument;
+
   bool doesUserFollow = false; // TODO check if user follows from DB
+
+  @override
+  void initState() {
+    // Get user info
+    getUser(widget.notificationDocument['actor_uid']).then((user) {
+      setState(() {
+        username = user['username'];
+        name = user['name'];
+        profilepic = NetworkImage(user['profilepic']);
+      });
+    });
+
+    type = widget.notificationDocument['type'];
+    if (type == 0) {
+      isPost = true;
+      notification = "liked your post";
+    } else if (type == 1) {
+      isPost = true;
+      notification = "commented on your post";
+    }
+    timestamp =
+        getTimeDifference(widget.notificationDocument['timestamp'].toDate());
+
+    // Get post document
+    Firestore.instance
+        .collection('users')
+        .document(widget.notificationDocument['notifier_uid'])
+        .collection('posts')
+        .document(widget.notificationDocument['entity_id'])
+        .get()
+        .then((value) => this.postDocument = value);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         print("notication pressed");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  PostViewComments(postDocument: this.postDocument)),
+        );
       },
       child: Container(
         // margin: EdgeInsets.all(0),
@@ -48,8 +90,8 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                       print("profile picture pressed");
                     },
                     child: CircleAvatar(
-                      radius: 22.0,
-                      // backgroundImage: AssetImage(assetName),
+                      radius: 35.0,
+                      backgroundImage: profilepic,
                     ),
                   ),
                   SizedBox(width: 10),
@@ -62,21 +104,21 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                       text: TextSpan(
                         children: <TextSpan>[
                           TextSpan(
-                            text: "${widget.username}",
+                            text: "${this.username}",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500),
                           ),
                           TextSpan(
-                            text: " ${widget.notification}",
+                            text: " ${this.notification}",
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 15,
                             ),
                           ),
                           TextSpan(
-                            text: " ${widget.timestamp}",
+                            text: " ${this.timestamp}",
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
@@ -89,7 +131,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                 ],
               ),
             ),
-            (widget.isPost)
+            (this.isPost)
                 ? Image(
                     // TODO Add song cover image
                     image: NetworkImage(
