@@ -21,7 +21,6 @@ class PostViewComments extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Container(
-            // TODO get post information from DB
             padding: EdgeInsets.symmetric(vertical: 10),
             child: Post(
               postDocument: this.postDocument,
@@ -107,7 +106,6 @@ class _CommentFormState extends State<CommentForm> {
                 if (_formKey.currentState.validate()) {
                   Scaffold.of(context)
                       .showSnackBar(SnackBar(content: Text('Posting...')));
-                  // TODO Add comment to database
                   addComment(widget.postDocument, commentController.text);
                   Scaffold.of(context)
                       .showSnackBar(SnackBar(content: Text('Posted')));

@@ -12,7 +12,6 @@ class PageManager extends StatefulWidget {
 }
 
 class _PageManagerState extends State<PageManager> {
-  // TODO add other pages below!
   HomePage homePage;
   PostPage postPage;
   NotificationsPage notificationsPage;
@@ -32,7 +31,6 @@ class _PageManagerState extends State<PageManager> {
 
   @override
   void initState() {
-    // TODO add other pages below!
     homePage = HomePage(key: keyhomePage);
     postPage = PostPage();
     notificationsPage = NotificationsPage(key: keyNotificationsPage);
@@ -56,7 +54,6 @@ class _PageManagerState extends State<PageManager> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO If user is logged out then show log in screen instead
     return Scaffold(
       body: PageStorage(
         child: currentPage,

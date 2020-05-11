@@ -92,6 +92,7 @@ class _SignInState extends State<SignIn> {
                           context,
                           MaterialPageRoute(builder: (context) => PageManager()),
                         );
+                        saveDeviceToken();
                       }
                     } catch (e) {
                       print(e);

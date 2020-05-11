@@ -1,10 +1,119 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart' show rootBundle;
+
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final Firestore _db = Firestore.instance;
+final FirebaseMessaging _fcm = FirebaseMessaging();
+
+
+// Get secret from https://medium.com/@sokrato/storing-your-secret-keys-in-flutter-c0b9af1c0f69
+class Secret {
+  final String serverToken;
+
+  Secret({this.serverToken=""});
+
+  factory Secret.fromJson(Map<String, dynamic>jsonMap){
+    return new Secret(serverToken:jsonMap["server_token"]);
+  }
+}
+
+// Get secret from https://medium.com/@sokrato/storing-your-secret-keys-in-flutter-c0b9af1c0f69
+class SecretLoader {
+  final String secretPath;
+
+  SecretLoader({this.secretPath});
+  Future<Secret> load() {
+    return rootBundle.loadStructuredData<Secret>(this.secretPath,
+            (jsonStr) async {
+          final secret = Secret.fromJson(json.decode(jsonStr));
+          return secret;
+        });
+  }
+}
+
+/// Send notification to device using google cloud web api
+Future<http.Response> sendNotification(String uid, int type) async{
+  String message;
+  String token;
+
+  // Get token of the user
+  await _db.collection('users').document(uid).collection('tokens').getDocuments().then((value) {
+    value.documents.forEach((element) {
+      token = element['token'];
+    });
+  });
+
+  Secret secret = await SecretLoader(secretPath: "secrets.json").load();
+
+  // Create message
+  if (type == 0){
+    message = "Someone liked your post";
+  }else if(type == 1){
+    message = "Someone commented on your post";
+  }
+  // Sleeping for test
+  sleep(Duration(seconds: 5));
+
+  http.Response response = await http.post(
+    'https://fcm.googleapis.com/fcm/send',
+     headers: <String, String>{
+       'Content-Type': 'application/json',
+       'Authorization': 'key=${secret.serverToken}',
+     },
+     body: jsonEncode(
+     <String, dynamic>{
+       'notification': <String, dynamic>{
+         'body': message,
+         'title': 'Music Social'
+       },
+       'priority': 'high',
+       'data': <String, dynamic>{
+         'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+         'id': '1',
+         'status': 'done'
+       },
+       'to': token.toString(),
+     },
+    ),
+  );
+  // .then((responseValue){
+  //   // print(responseValue.statusCode);
+  //   // print(responseValue.body);
+  // });
+  return response;
+}
+
+/// Save current device token to database
+/// Needed for push notifications
+void saveDeviceToken() async{
+  FirebaseUser currentUser = await _auth.currentUser();
+  String token = await _fcm.getToken();
+  
+  // Add token to database
+  if (token != null){
+    DocumentReference tokenRef = _db.collection('users')
+        .document(currentUser.uid)
+        .collection('tokens')
+        .document(token);
+
+    await tokenRef.setData({
+      'token' : token,
+      'timestamp' : FieldValue.serverTimestamp(),
+      'platform' : Platform.operatingSystem
+    });
+  }
+}
 
 /// Gets a user then returns the userDocument
 Future<DocumentSnapshot> getUser(String userID) async {
   Future<DocumentSnapshot> userDocument =
-      Firestore.instance.collection('users').document(userID).get();
+      _db.collection('users').document(userID).get();
   return userDocument;
 }
 
@@ -13,7 +122,7 @@ Future<DocumentSnapshot> getUser(String userID) async {
 /// Type: 1 = Comment
 Future<DocumentReference> createNotification(
     DocumentSnapshot entityDocument, int type) async {
-  var currentUser = await FirebaseAuth.instance.currentUser();
+  var currentUser = await _auth.currentUser();
 
   // Create Notification
   var notification = new Map<String, dynamic>();
@@ -24,7 +133,7 @@ Future<DocumentReference> createNotification(
   notification['timestamp'] = FieldValue.serverTimestamp();
 
   // Search database for notification
-  return Firestore.instance
+  return _db
       .collection('users')
       .document(entityDocument['uid'])
       .collection('notifications')
@@ -36,16 +145,17 @@ Future<DocumentReference> createNotification(
       .then((querySnapshot) async {
     if (querySnapshot.documents.isEmpty) {
       // Add notification to database if doesn't exist
-      final DocumentReference notificationRef = await Firestore.instance
+      final DocumentReference notificationRef = await _db
           .collection('users')
           .document(entityDocument['uid'])
           .collection('notifications')
           .add(notification);
+      sendNotification(entityDocument['uid'], type);
       return notificationRef;
     } else {
       // Delete notification if it exists
       querySnapshot.documents.forEach((element) async {
-        Firestore.instance
+        _db
             .collection('users')
             .document(entityDocument['uid'])
             .collection('notifications')
@@ -59,7 +169,7 @@ Future<DocumentReference> createNotification(
 
 ///  Adds the post to the database
 Future<DocumentReference> createPost(String caption, String song) async {
-  var currentUser = await FirebaseAuth.instance.currentUser();
+  var currentUser = await _auth.currentUser();
 
   // Create Post
   var post = new Map<String, dynamic>();
@@ -70,7 +180,7 @@ Future<DocumentReference> createPost(String caption, String song) async {
   post['commentCount'] = 0;
   post['timestamp'] = FieldValue.serverTimestamp();
 
-  final DocumentReference postRef = await Firestore.instance
+  final DocumentReference postRef = await _db
       .collection('users')
       .document(currentUser.uid)
       .collection('posts')
@@ -80,7 +190,7 @@ Future<DocumentReference> createPost(String caption, String song) async {
 
 /// Returns a stream of a posts comments
 Stream<QuerySnapshot> getComments(DocumentSnapshot postDocument) {
-  return Firestore.instance
+  return _db
       .collection('users')
       .document(postDocument['uid'])
       .collection('posts')
@@ -92,7 +202,7 @@ Stream<QuerySnapshot> getComments(DocumentSnapshot postDocument) {
 /// Adds the comment to the post by the user
 Future<DocumentReference> addComment(
     DocumentSnapshot postDocument, String commentString) async {
-  var currentUser = await FirebaseAuth.instance.currentUser();
+  var currentUser = await _auth.currentUser();
 
   var comment = new Map<String, dynamic>();
   comment['uid'] = currentUser.uid;
@@ -100,7 +210,7 @@ Future<DocumentReference> addComment(
   comment['timestamp'] = FieldValue.serverTimestamp();
 
   // Add the comment
-  final DocumentReference commentRef = await Firestore.instance
+  final DocumentReference commentRef = await _db
       .collection('users')
       .document(postDocument['uid'])
       .collection('posts')
@@ -111,7 +221,7 @@ Future<DocumentReference> addComment(
   // Update the comment counter
   var post = new Map<String, dynamic>();
   post['commentCount'] = FieldValue.increment(1);
-  await Firestore.instance
+  await _db
       .collection('users')
       .document(postDocument['uid'])
       .collection('posts')
@@ -125,8 +235,8 @@ Future<DocumentReference> addComment(
 }
 
 /// likes or unlikes a post
-Future<DocumentReference> likePost(DocumentSnapshot postDocument) async {
-  var currentUser = await FirebaseAuth.instance.currentUser();
+void likePost(DocumentSnapshot postDocument) async {
+  var currentUser = await _auth.currentUser();
 
   Map<String, dynamic> likes =
       new Map<String, dynamic>.from(postDocument['likes']);
@@ -140,7 +250,7 @@ Future<DocumentReference> likePost(DocumentSnapshot postDocument) async {
   var post = new Map<String, dynamic>();
   post['likes'] = likes;
 
-  await Firestore.instance
+  await _db
       .collection('users')
       .document(postDocument['uid'])
       .collection('posts')
@@ -160,5 +270,5 @@ void addUser(String userID, String username, String name,
   user['name'] = name;
   user['timestamp'] = FieldValue.serverTimestamp();
   user['profilepic'] = profilepic;
-  await Firestore.instance.collection('users').document(userID).setData(user);
+  await _db.collection('users').document(userID).setData(user);
 }

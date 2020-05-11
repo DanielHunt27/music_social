@@ -123,6 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             MaterialPageRoute(
                                 builder: (context) => PageManager()),
                           );
+                          saveDeviceToken();
                         }
                       } catch (e) {
                         print(e);
