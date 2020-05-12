@@ -27,10 +27,19 @@ class _PostFormState extends State<PostForm> {
   final songController = TextEditingController();
   final songURIController = TextEditingController();
   int songType = 0;
+  String songURIField = 'Song URI';
+  String hintText = 'E.g 22bvm1tH5Uv6Egvk38Xvr8';
 
   void _songTypeChange(int value) {
     setState(() {
       songType = value;
+      if (songType == 0) {
+        songURIField = 'Song URI';
+        hintText = 'E.g 22bvm1tH5Uv6Egvk38Xvr8';
+      } else {
+        songURIField = 'Song URL';
+        hintText = 'E.g https://soundcloud.com/uiceheidd/righteous';
+      }
     });
   }
 
@@ -53,10 +62,10 @@ class _PostFormState extends State<PostForm> {
             ),
             TextFormField(
               controller: songURIController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 // icon: Icon(Icons.comment),
-                labelText: 'Song URI',
-                hintText: 'E.g 22bvm1tH5Uv6Egvk38Xvr8'
+                labelText: songURIField,
+                hintText: hintText
               ),
             ),
             Row(
