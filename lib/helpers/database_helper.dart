@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:location/location.dart';
 
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -173,6 +174,31 @@ Future<DocumentReference> createNotification(
 Future<DocumentReference> createPost(String caption, String song, String uri, int type) async {
   var currentUser = await _auth.currentUser();
 
+  Location location = new Location();
+
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  LocationData _locationData;
+
+  _serviceEnabled = await location.serviceEnabled();
+  if (!_serviceEnabled) {
+    _serviceEnabled = await location.requestService();
+    if (!_serviceEnabled) {
+      //return;
+    }
+  }
+
+  _permissionGranted = await location.hasPermission();
+  if (_permissionGranted == PermissionStatus.denied) {
+    _permissionGranted = await location.requestPermission();
+    if (_permissionGranted != PermissionStatus.granted) {
+      //return;
+    }
+  }
+
+  _locationData = await location.getLocation();
+  print(_locationData);
+
   // Create Post
   var post = new Map<String, dynamic>();
   post['uid'] = currentUser.uid;
@@ -183,6 +209,8 @@ Future<DocumentReference> createPost(String caption, String song, String uri, in
   post['likes'] = new Map<String, dynamic>();
   post['commentCount'] = 0;
   post['timestamp'] = FieldValue.serverTimestamp();
+  post['lat'] = _locationData.latitude;
+  post['long'] = _locationData.longitude;
 
   final DocumentReference postRef = await _db
       .collection('users')
